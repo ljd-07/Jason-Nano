@@ -15,3 +15,42 @@ sudo chmod 755 Archiconda3-0.2.3-Linux-aarch64.sh
 conda 명령을 사용하기 위해 다음과 같이 .bashrc에 경로를 추가하세요.
 yes---> enter ---> yes in your /home/ldh/.bashrc ? [yes|no] [no] >>> yes
 
+import cv2
+
+# 동영상 파일 경로
+video_path = 'your_video_file.mp4'
+
+# 얼굴 검출기 로드 (Haar Cascades 사용)
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# 동영상 파일 열기
+cap = cv2.VideoCapture(video_path)
+
+while True:
+    # 동영상에서 프레임 읽기
+    ret, frame = cap.read()
+
+    # 프레임이 없으면 종료
+    if not ret:
+        break
+
+    # 얼굴 검출을 위한 그레이스케일 변환
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # 얼굴 감지
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+    # 감지된 얼굴 주위에 사각형 그리기
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+
+    # 결과 출력
+    cv2.imshow('Face Detection', frame)
+
+    # 'q' 키를 누르면 종료
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# 동영상 파일 닫기
+cap.release()
+cv2.destroyAllWindows()
